@@ -7,7 +7,7 @@
 		"dev": "nodemon --config ./nodemon_configs/nodemon-dev.json",
 		"dev:ts": "nodemon ./src/app.ts",
 		"debug": "nodemon --config ./nodemon_configs/nodemon-debug.json",
-		"build": "NODE_ENV=production tsc && tsc-alias"
+		"build": "NODE_ENV=production tsc && tsc-alias && node ./dist/app.js"
 	},
 	"keywords": [
 		"rohit",

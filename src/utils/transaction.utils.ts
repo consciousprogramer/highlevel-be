@@ -3,7 +3,7 @@ import { TRANSACTION_TYPES } from "@utils/constants/model.constants.js"
 import { AppError } from "./customErrors.utils.js"
 import { StatusCodes } from "http-status-codes"
 
-export const safeToFixed = (value: number) => {
+export const safeToFixed = (value: number, checkForZero = true) => {
 	const splitStr = value.toString().split(".") as [string, string] | [string]
 
 	if (splitStr.length === 2) {
@@ -12,7 +12,7 @@ export const safeToFixed = (value: number) => {
 
 	const fixedDecimalNumber = Number(splitStr.join("."))
 
-	if (fixedDecimalNumber === 0) {
+	if (checkForZero && fixedDecimalNumber === 0) {
 		throw new AppError("value to small", StatusCodes.BAD_REQUEST, false)
 	}
 	return fixedDecimalNumber
@@ -26,11 +26,11 @@ export const safeToFixed = (value: number) => {
  * @return {number} The result of `n1 + n2` with precision set in config.
  */
 export const precisionSafeAdd = (n1: number, n2: number) => {
-	return safeToFixed(n1 + n2)
+	return safeToFixed(n1 + n2, false)
 }
 
 export const precisionSafeSubstraction = (n1: number, n2: number) => {
-	return safeToFixed(n1 - n2)
+	return safeToFixed(n1 - n2, false)
 }
 
 export const getTransactionType = (amount: number) => {

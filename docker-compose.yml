@@ -2,8 +2,6 @@ version: '3.8'
 services:
   backend:
     build: .
-      # args:
-      #   - NODE_ENV=development
     container_name: dc-ghl-be
     ports:
       - 8080:8080

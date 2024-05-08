@@ -69,7 +69,7 @@ Wallet.init(
 		tableName: "wallet",
 		indexes: [
 			{
-				fields: ["name"],
+				fields: ["created_at"],
 			},
 		],
 	}

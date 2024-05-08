@@ -15,7 +15,7 @@ model Wallet {
   updated_at  DateTime?     @db.DateTime(0)
   transaction transaction[]
 
-  @@index([name], map: "wallet_name")
+  @@index([created_at], map: "wallet_created_at")
   @@map("wallet")
 }
 
@@ -33,6 +33,7 @@ model transaction {
   @@index([amount], map: "transaction_amount")
   @@index([type], map: "transaction_type")
   @@index([wallet_id], map: "transaction_wallet_id")
+  @@index([created_at], map: "transaction_created_at")
 }
 
 model transaction_type {

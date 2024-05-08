@@ -13,7 +13,7 @@ export const transactService = async (data: {
 	const { walletId, amount } = data
 
 	const transaction = await sequelizeInstance.transaction({
-		isolationLevel: sq.Transaction.ISOLATION_LEVELS.REPEATABLE_READ,
+		isolationLevel: sq.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
 	})
 
 	const absAmount = Math.abs(amount)
