@@ -8,7 +8,7 @@ type TWorkerEnv = {
 	BIND_PORT: string | number
 }
 
-const numCPUs = process.env.NODE_ENV !== "production" ? 1 : os.cpus().length
+const numCPUs = process.env.NODE_ENV !== "production" ? 2 : os.cpus().length
 
 const MAIN_PORT = parseInt(process.env.PORT || "8080")
 

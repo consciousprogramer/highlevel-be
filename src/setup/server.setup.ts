@@ -6,6 +6,7 @@ import { morganRequestLoggerMiddleware } from "./morgan.setup.js"
 import { StatusCodes } from "http-status-codes"
 import cors from "cors"
 import { expressErrorHandler } from "./errorHandling.setup.js"
+import { executeSeeding } from "./dataSeeding.setup.js"
 
 const app = express()
 
@@ -26,6 +27,7 @@ export const initServer = () => {
 	app.use(morganRequestLoggerMiddleware)
 
 	app.listen(getServerListenPort(), async () => {
+		await executeSeeding()
 		if (cluster.isWorker) {
 			logger.info(
 				`process with pid ${process.pid} listening on port ${getServerListenPort()}`

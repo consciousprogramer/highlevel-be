@@ -1,20 +1,5 @@
 version: '3.8'
 services:
-  backend:
-    build: .
-    container_name: dc-ghl-be
-    ports:
-      - 8080:8080
-      - 9229:9229
-    depends_on:
-      - database
-    volumes:
-      - ${PWD}:/app
-      # - D:\work-projects\ghl-be:/app
-    env_file:
-      - ./docker.env
-    entrypoint: /app/docker-entrypoint.sh
-
   database:
     image: mysql
     container_name: dc-ghl-mysql
@@ -24,6 +9,27 @@ services:
       - 3306
     volumes:
       - dc-ghl-mysql-vol:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "database" ]
+      interval: 2s
+      timeout: 30s
+      retries: 30
+
+  backend:
+    build: .
+    container_name: dc-ghl-be
+    ports:
+      - 8080:8080
+      - 9229:9229
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ${PWD}:/app
+      # - D:\work-projects\ghl-be:/app
+    env_file:
+      - ./docker.env
+    entrypoint: /app/docker-entrypoint.sh
 
 volumes:
   dc-ghl-mysql-vol:
