@@ -1,0 +1,12 @@
+{
+    "watch": [
+        "./src",
+        "package.json",
+        ".env"
+    ],
+    "ext": "ts",
+    "exec": "tsc && tsc-alias && node --inspect=0.0.0.0 ./dist/app.js",
+    "execMap": {
+        "ts": "ts-node"
+    }
+}

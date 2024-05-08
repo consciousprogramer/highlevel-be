@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+      # args:
+      #   - NODE_ENV=development
+    container_name: dc-ghl-be
+    ports:
+      - 8080:8080
+      - 9229:9229
+    depends_on:
+      - database
+    volumes:
+      - ${PWD}:/app
+      # - D:\work-projects\ghl-be:/app
+    env_file:
+      - ./docker.env
+    entrypoint: /app/docker-entrypoint.sh
+
+  database:
+    image: mysql
+    container_name: dc-ghl-mysql
+    env_file:
+      - ./docker.env
+    expose:
+      - 3306
+    volumes:
+      - dc-ghl-mysql-vol:/var/lib/mysql
+
+volumes:
+  dc-ghl-mysql-vol:
+  dc-ghl-redis-vol:

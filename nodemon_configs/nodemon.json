@@ -1,0 +1,12 @@
+{
+    "watch": [
+        "./src",
+        "package.json",
+        ".env"
+    ],
+    "ext": "ts",
+    "exec": "ts-node ./src/app.ts",
+    "execMap": {
+        "ts": "ts-node"
+    }
+}
