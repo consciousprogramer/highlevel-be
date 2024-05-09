@@ -19,7 +19,7 @@ export const SORT_ORDER = Object.freeze({
 export const JOB_STATUSES = Object.freeze({
 	PUSHED: "PUSHED",
 	STARTED: "STARTED",
-	SETTLED: "SETTLED",
+	COMPLETED: "COMPLETED",
 	ERRORED: "ERRORED",
 })
 

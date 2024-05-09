@@ -2,10 +2,12 @@ import JobRecord from "@/models/JobRecord.model.js"
 import transactionRepository from "@/repositories/transaction.repository.js"
 import s3Client, { bucketName } from "@/setup/awsS3.setup.js"
 import { redis } from "@/setup/redis.setup.js"
+import { sequelizeInstance } from "@/setup/sequelize.setup.js"
 import logger from "@/setup/winston.setup.js"
 import { TJobEventData } from "@/types/job.types.js"
 import { generateTransactionsCSVFileKey } from "@/utils/aws.utils.js"
 import { JOB_STATUSES } from "@/utils/constants/model.constants.js"
+import SQ from "sequelize"
 import {
 	REDIS_KEYS,
 	REDIS_MESSAGE_DATA,
@@ -79,6 +81,8 @@ export const generateCsvJob = async (eventMessageData: string) => {
 			new Error(`Job with id ${jobRecordId} not found`)
 		}
 
+		// TODO: May need to add logic to check if csv already generated
+		// but not sure, in development every time is better i guess
 		const fastCsvWriteStream = fastCsv.format({
 			headers: true,
 		})
@@ -130,6 +134,32 @@ export const generateCsvJob = async (eventMessageData: string) => {
 			.promise()
 
 		// ===============================[ JOB COMPLETED ]============================
+
+		const txn = await sequelizeInstance.transaction({
+			isolationLevel: SQ.Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+		})
+
+		try {
+			await Promise.all([
+				JobRecord.update(
+					{
+						status: JOB_STATUSES.COMPLETED,
+						result: JSON.stringify({ Key: Key }),
+					},
+					{
+						where: {
+							id: jobRecordId,
+							status: JOB_STATUSES.STARTED,
+						},
+					}
+				),
+			])
+
+			await txn.commit()
+		} catch (error) {
+			await txn.rollback()
+			throw error
+		}
 
 		// update the lock status as false (released)
 		await redis.hSet(REDIS_KEYS.HASH.LOCKS, resourceId, "false")

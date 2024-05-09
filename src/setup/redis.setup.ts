@@ -13,9 +13,11 @@ export const redisSubscriber = createClient({ url })
 await redis.connect()
 await redisSubscriber.connect().then(() => {
 	if (cluster.isWorker) {
-		// redisSubscriber.subscribe(
-		// 	generateResourceEventNameString(process.env.RESOURCE_ID!),
-		// 	generateCsvJob
-		// )
+		redisSubscriber.subscribe(
+			generateResourceEventNameString(process.env.RESOURCE_ID!),
+			(message: string) => {
+				logger.info(`CSV generation event received, message ${message}`)
+			}
+		)
 	}
 })

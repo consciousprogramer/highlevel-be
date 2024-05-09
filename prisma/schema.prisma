@@ -51,6 +51,7 @@ model job_record {
   resource_id String            @db.VarChar(255)
   status      job_record_status
   worker_id   Int               @db.UnsignedInt
+  result      String?
   created_at  DateTime?         @db.DateTime(0)
   updated_at  DateTime?         @db.DateTime(0)
   wallet      wallet            @relation(fields: [wallet_id], references: [id], onDelete: NoAction, map: "job_record_ibfk_1")

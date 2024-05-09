@@ -14,6 +14,7 @@ export interface IJobRecordAttributes {
 	workerId: number
 	status: TJobsStatus
 	// type: TJobsStatus
+	result?: string
 	createdAt: Date
 	updatedAt: Date
 }
@@ -24,6 +25,7 @@ export interface IJobRecordCreateAttributes {
 	resourceId: string
 	workerId: number
 	status: TJobsStatus
+	result?: string
 	// type: TJobsStatus
 }
 
@@ -38,6 +40,7 @@ class JobRecord extends Model<
 	declare walletId: string
 	declare workerId: number
 	declare status: TJobsStatus
+	declare result?: string
 	// declare type: TJobsStatus
 	declare createdAt: Date
 	declare updatedAt: Date
@@ -76,7 +79,11 @@ JobRecord.init(
 			type: DataTypes.ENUM(...Object.values(JOB_STATUSES)),
 			allowNull: false,
 		},
-
+		result: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			field: "result",
+		},
 		workerId: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,

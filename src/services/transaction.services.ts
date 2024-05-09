@@ -85,60 +85,7 @@ export const generateTransactionsCSVService = async (walletId: string) => {
 		REDIS_MESSAGE_DATA.DATA.SOURCE
 	)
 
-	// TODO: May need to add logic to check if csv already generated
-	// but not sure, in development every time is better i guess
-
-	// ======================[ NOW THIS HAPPENS IN JOB ]=======================
-
-	// const fastCsvWriteStream = fastCsv.format({
-	// 	headers: true,
-	// })
-
-	// const csvBodyStream = new stream.PassThrough()
-
-	// // no need to worry about backpressure, pipe handles it automatically
-	// fastCsvWriteStream.pipe(csvBodyStream)
-
-	// const walletTransactionsIterator = {
-	// 	perPage: 50,
-	// 	currentPage: 1,
-	// 	hasNextPage: true,
-	// 	[Symbol.asyncIterator]: async function* () {
-	// 		while (this.hasNextPage) {
-	// 			const transactions =
-	// 				await transactionRepository.fetchWalletTransactions(walletId, {
-	// 					limit: this.perPage,
-	// 					skip: (this.currentPage - 1) * this.perPage,
-	// 				})
-	// 			if (transactions.length < this.perPage) {
-	// 				this.hasNextPage = false
-	// 			}
-	// 			this.currentPage++
-	// 			yield transactions
-	// 		}
-	// 	},
-	// }
-
-	// for await (const transactionsBatch of walletTransactionsIterator) {
-	// 	transactionsBatch.forEach((transaction) => {
-	// 		fastCsvWriteStream.write(transaction)
-	// 	})
-	// }
-
-	// fastCsvWriteStream.end()
-
-	// ======================[ NOW THIS HAPPENS IN JOB ]=======================
-
 	const s3CSVKey = generateTransactionsCSVFileKey(walletId)
-
-	// const { Key } = await s3Client
-	// 	.upload({
-	// 		Bucket: bucketName,
-	// 		Key: s3CSVKey,
-	// 		Body: csvBodyStream,
-	// 		ContentType: "text/csv",
-	// 	})
-	// 	.promise()
 
 	const Location = await s3Client.getSignedUrlPromise("getObject", {
 		Bucket: bucketName,
