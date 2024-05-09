@@ -107,9 +107,6 @@ JobRecord.init(
 				fields: ["created_at"],
 			},
 			{
-				fields: ["resource_id"],
-			},
-			{
 				fields: ["status"],
 			},
 			{

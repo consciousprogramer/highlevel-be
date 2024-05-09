@@ -53,12 +53,12 @@ export const syncDB = async () => {
 	if (!sequelizeInstance) {
 		throw new Error("Sequelize instance not set")
 	}
-	await sequelizeInstance.sync({
-		force: true,
-	})
+	await sequelizeInstance.sync()
 
 	logger.info("Database synced ✅")
 }
+
+// sequelizeInstance.authenticate().then(syncDB)
 
 export const initSequelize = () => {
 	const { error, value, warning } = dbValidationSchema.validate({

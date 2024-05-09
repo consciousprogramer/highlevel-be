@@ -100,6 +100,9 @@ Transaction.init(
 			{
 				fields: ["amount"],
 			},
+			{
+				fields: ["created_at"],
+			},
 		],
 	}
 )

@@ -95,22 +95,4 @@ Wallet.hasMany(Transaction, {
 	foreignKeyConstraint: true,
 })
 
-// Wallet.belongsTo(Transaction, {
-// 	foreignKey: {
-// 		name: "lastCsvGenTxnId",
-// 		field: "last_csv_gen_txn_id",
-// 		allowNull: true,
-// 	},
-// 	foreignKeyConstraint: true,
-// })
-
-// Transaction.hasMany(Wallet, {
-// 	foreignKey: {
-// 		name: "lastCsvGenTxnId",
-// 		field: "last_csv_gen_txn_id",
-// 		allowNull: true,
-// 	},
-// 	foreignKeyConstraint: true,
-// })
-
 export default Wallet
