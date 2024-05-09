@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, ForeignKey, Model } from "sequelize"
 import { sequelizeInstance } from "../setup/sequelize.setup.js"
 import Transaction from "./Transaction.model.js"
 import { appConfig } from "../configs/index.js"
@@ -7,6 +7,7 @@ export interface IWalletAttributes {
 	id: string
 	name: string
 	balance: string
+	// lastCsvGenTxnId: ForeignKey<string> // FK to Transaction
 	createdAt: Date
 	updatedAt: Date
 }
@@ -23,6 +24,7 @@ class Wallet extends Model<IWalletAttributes, IWalletCreateAttributes> {
 	declare id: string
 	declare name: string
 	declare balance: string
+	// declare lastCsvGenTxnId: ForeignKey<string>
 	declare createdAt: Date
 	declare updatedAt: Date
 }
@@ -92,5 +94,23 @@ Wallet.hasMany(Transaction, {
 	},
 	foreignKeyConstraint: true,
 })
+
+// Wallet.belongsTo(Transaction, {
+// 	foreignKey: {
+// 		name: "lastCsvGenTxnId",
+// 		field: "last_csv_gen_txn_id",
+// 		allowNull: true,
+// 	},
+// 	foreignKeyConstraint: true,
+// })
+
+// Transaction.hasMany(Wallet, {
+// 	foreignKey: {
+// 		name: "lastCsvGenTxnId",
+// 		field: "last_csv_gen_txn_id",
+// 		allowNull: true,
+// 	},
+// 	foreignKeyConstraint: true,
+// })
 
 export default Wallet

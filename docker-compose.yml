@@ -15,6 +15,21 @@ services:
       timeout: 30s
       retries: 30
 
+  redis:
+    image: redis
+    container_name: dc-ghl-redis
+    expose:
+      - 6379
+    volumes:
+      - dc-ghl-redis-vol:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 2s
+      timeout: 30s
+      retries: 30
+    ports:
+      - 6379
+
   backend:
     build: .
     container_name: dc-ghl-be
@@ -23,6 +38,8 @@ services:
       - 9229:9229
     depends_on:
       database:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     volumes:
       - ${PWD}:/app

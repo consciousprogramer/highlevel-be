@@ -15,3 +15,14 @@ export const SORT_ORDER = Object.freeze({
 	ASC: "ASC",
 	DESC: "DESC",
 })
+
+export const JOB_STATUSES = Object.freeze({
+	PUSHED: "PUSHED",
+	STARTED: "STARTED",
+	SETTLED: "SETTLED",
+	ERRORED: "ERRORED",
+})
+
+export const JOB_TYPES = Object.freeze({
+	CSV_GENERATION: "CSV_GENERATION",
+})

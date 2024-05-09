@@ -4,6 +4,13 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+		// {
+		// 	"name": "Attach to Chrome",
+		// 	"port": 9222,
+		// 	"request": "attach",
+		// 	"type": "chrome",
+		// 	"webRoot": "${workspaceFolder}"
+		// },
 		{
 			"name": "Docker: Attach to Node",
 			"type": "node",
@@ -14,8 +21,15 @@
 				"maxAttempts": 10
 			},
 			"localRoot": "${workspaceFolder}",
-			"remoteRoot": "/",
-			"address": "localhost"
+			"remoteRoot": "/app",
+			// "sourceMapPathOverrides": {
+			// 	"webpack:///src/**": "${workspaceFolder}/**"
+			// },
+			"address": "localhost",
+			"resolveSourceMapLocations": [
+				"${workspaceFolder}/**",
+				"!**/node_modules/**"
+			]
 		}
 	]
 }
