@@ -42,7 +42,6 @@ export const transactController: RequestHandler<
 	try {
 		const { walletId } = req.params
 
-		req.body
 
 		const result = await transactService({
 			walletId,

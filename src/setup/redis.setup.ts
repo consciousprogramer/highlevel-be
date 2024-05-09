@@ -1,24 +1,23 @@
-// import { createClient } from "redis"
-// import cluster from "node:cluster"
-// import {
-// 	generateWorkerEventNameString,
-// 	generateWorkerQueueNameString,
-// } from "@/utils/redis.utils.js"
+import { createClient } from "redis"
+import logger from "./winston.setup.js"
+import cluster from "node:cluster"
+import { REDIS_KEYS } from "@/utils/constants/redis.constants.js"
+import { generateResourceEventNameString } from "@/utils/redis.utils.js"
+import { generateCsvJob } from "@/jobs/generateCsv.job.js"
 
-// const url = "redis://redis:6379"
+const url = "redis://redis:6379"
 
-// export const publisher = createClient({ url })
-// export const subscriber = createClient({ url })
+export const redis = createClient({ url })
+export const redisSubscriber = createClient({ url })
 
-// await publisher.connect()
-// await subscriber.connect()
-
-// subscriber.subscribe(
-// 	generateWorkerEventNameString(cluster.worker!.id!, process.pid),
-// 	() => {}
-// )
-
-// subscriber.subscribe(
-// 	generateWorkerQueueNameString(cluster.worker!.id!, process.pid),
-// 	() => {}
-// )
+await redis.connect()
+await redisSubscriber.connect().then(() => {
+	if (cluster.isWorker) {
+		redisSubscriber.subscribe(
+			generateResourceEventNameString(process.env.RESOURCE_ID!),
+			(message: string) => {
+				logger.info(`CSV generation event received, message ${message}`)
+			}
+		)
+	}
+})

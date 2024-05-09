@@ -7,12 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Wallet {
+model wallet {
   id          String        @id @db.VarChar(255)
   name        String        @db.VarChar(255)
   balance     Decimal?      @default(0.0000) @db.Decimal(20, 4)
   created_at  DateTime?     @db.DateTime(0)
   updated_at  DateTime?     @db.DateTime(0)
+  job_record  job_record[]
   transaction transaction[]
 
   @@index([created_at], map: "wallet_created_at")
@@ -28,7 +29,7 @@ model transaction {
   type             String           @db.VarChar(255)
   wallet_id        String           @db.VarChar(255)
   transaction_type transaction_type @relation(fields: [type], references: [name], onDelete: NoAction, map: "transaction_ibfk_1")
-  wallet           Wallet           @relation(fields: [wallet_id], references: [id], onDelete: NoAction, map: "transaction_ibfk_2")
+  wallet           wallet           @relation(fields: [wallet_id], references: [id], onDelete: NoAction, map: "transaction_ibfk_2")
 
   @@index([amount], map: "transaction_amount")
   @@index([type], map: "transaction_type")
@@ -42,4 +43,27 @@ model transaction_type {
   priority    Int           @unique(map: "priority") @db.UnsignedInt
   created_at  DateTime?     @db.DateTime(0)
   transaction transaction[]
+}
+
+model job_record {
+  id          String            @id @db.VarChar(255)
+  wallet_id   String            @db.VarChar(255)
+  resource_id String            @db.VarChar(255)
+  status      job_record_status
+  worker_id   Int               @db.UnsignedInt
+  result      String?
+  created_at  DateTime?         @db.DateTime(0)
+  updated_at  DateTime?         @db.DateTime(0)
+  wallet      wallet            @relation(fields: [wallet_id], references: [id], onDelete: NoAction, map: "job_record_ibfk_1")
+
+  @@index([created_at], map: "job_record_created_at")
+  @@index([status], map: "job_record_status")
+  @@index([wallet_id], map: "job_record_wallet_id")
+}
+
+enum job_record_status {
+  PUSHED
+  STARTED
+  SETTLED
+  ERRORED
 }

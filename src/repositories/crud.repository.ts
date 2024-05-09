@@ -65,7 +65,7 @@ export default class CRUDRepository<M extends Model<any, any>> {
 		this.name = name
 	}
 
-	private generateUUIDV4() {
+	generateUUID() {
 		return v4()
 	}
 
@@ -117,7 +117,7 @@ export default class CRUDRepository<M extends Model<any, any>> {
 			} else {
 				valuesWithId = {
 					...values,
-					[idField]: this.generateUUIDV4(),
+					[idField]: this.generateUUID(),
 				} as CreationAttributes<M>
 			}
 			const result = await this.model.create(valuesWithId, options)
