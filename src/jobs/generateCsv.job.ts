@@ -33,8 +33,11 @@ export const generateCsvJob = async (eventMessageData: string) => {
 
 		const isAnotherJobRunning = JSON.parse(lockStatus ?? "false")
 
+		// check what is the source of the event
 		if (source === "SOURCE" && isAnotherJobRunning) {
-			logger.error("Another csv generation job running for this resource.")
+			logger.error(
+				"Another csv generation job running for this resource, exiting."
+			)
 			return
 		}
 
@@ -44,7 +47,7 @@ export const generateCsvJob = async (eventMessageData: string) => {
 		queueItem = (await redis.LINDEX(queueName, -1))!
 
 		if (queueItem) {
-			// start new Job, and update lock status
+			// start new Job, and update lock status (acquired lock)
 			// TODO: Race condition can happen, add handling logic
 			await redis.hSet(REDIS_KEYS.HASH.LOCKS, resourceId, "true")
 		} else {
@@ -85,6 +88,7 @@ export const generateCsvJob = async (eventMessageData: string) => {
 		// no need to worry about backpressure, pipe handles it automatically
 		fastCsvWriteStream.pipe(csvBodyStream)
 
+		// setup the async iterator
 		const walletTransactionsIterator = {
 			perPage: 50,
 			currentPage: 1,
@@ -106,6 +110,7 @@ export const generateCsvJob = async (eventMessageData: string) => {
 		}
 
 		for await (const transactionsBatch of walletTransactionsIterator) {
+			// TODO: optimize later, write the whole batch at once
 			transactionsBatch.forEach((transaction) => {
 				fastCsvWriteStream.write(transaction)
 			})
@@ -126,6 +131,7 @@ export const generateCsvJob = async (eventMessageData: string) => {
 
 		// ===============================[ JOB COMPLETED ]============================
 
+		// update the lock status as false (released)
 		await redis.hSet(REDIS_KEYS.HASH.LOCKS, resourceId, "false")
 
 		// remove the last item from the queue
@@ -134,6 +140,7 @@ export const generateCsvJob = async (eventMessageData: string) => {
 		const { jobRecordId: popedJobRecordId } =
 			csvGenerationQueueItemUtil.decodeItem(poppedMarketId!)
 
+		// both should match as they are same
 		if (poppedMarketId !== jobRecordId) {
 			// TODO: throw error
 			logger.error(
@@ -148,6 +155,7 @@ export const generateCsvJob = async (eventMessageData: string) => {
 			} ms ✅`
 		)
 
+		// proceed to process next item
 		await redis.publish(
 			generateResourceEventNameString(resourceId),
 			REDIS_MESSAGE_DATA.DATA.JOB_END

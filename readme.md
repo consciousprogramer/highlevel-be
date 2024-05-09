@@ -1,12 +1,13 @@
-## HighLevel FullStack Assesment: Backend
+## HighLevel FullStack Assessment: Backend
 
 ### Tech Stack
-1. Node.js (In cluster mode)
+1. Node.js (cluster mode manged in main code)
 2. TypeScript
 3. Docker
 4. SequelizeORM with Prisma for db migrations
 5. MySql
-6. Nginx, AWS EC2, S3
+6. Redis (queue, pub/sub)
+7. Nginx, AWS EC2, S3
 
 ---
 
@@ -21,7 +22,7 @@
 6. build docker image `docker compose build`
 7. run the docker image `docker compose up`, it will start the nodejs and the MySql database, also the project volume mounted in the docker container  support for hot restart is there.
 
-The backend is running on `http://52.66.17.184/`
+The production backend is running on `http://52.66.17.184/`
 
 the required postman collection is already share on the email
 
