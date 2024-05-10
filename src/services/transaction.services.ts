@@ -5,10 +5,7 @@ import {
 	walletRepository,
 } from "@/repositories/index.js"
 import { calculatePaginationResponse } from "@/utils/response.util.js"
-import { bucketName, s3Client } from "@/setup/index.js"
-import fs from "node:fs"
-import stream from "node:stream"
-import * as fastCsv from "fast-csv"
+import { s3Client } from "@/setup/index.js"
 import { generateTransactionsCSVFileKey } from "@/utils/aws.utils.js"
 import { redis } from "@/setup/redis.setup.js"
 import {
@@ -22,6 +19,7 @@ import jobRecordRepository from "@/repositories/jobRecord.repository.js"
 import { JOB_STATUSES } from "@/utils/constants/model.constants.js"
 import cluster from "node:cluster"
 import { v4 } from "uuid"
+import { appConfig } from "@/configs/app.config.js"
 
 export const fetchWalletTransactionsService = async (
 	walletId: string,
@@ -85,17 +83,33 @@ export const generateTransactionsCSVService = async (walletId: string) => {
 		REDIS_MESSAGE_DATA.DATA.SOURCE
 	)
 
-	const s3CSVKey = generateTransactionsCSVFileKey(walletId)
+	return {
+		jobRecordId: jobRecord.id,
+	}
+}
+
+export const checkCsvGenerationJobStatusService = async (
+	jobRecordId: string
+) => {
+	const { data, isCompleted } =
+		await jobRecordRepository.checkCsvGenerationJob(jobRecordId)
+
+	if (!isCompleted && !data) {
+		return null
+	}
+
+	const { result } = data!
 
 	const Location = await s3Client.getSignedUrlPromise("getObject", {
-		Bucket: bucketName,
-		// s3CSVKey,
-		Key: `JOB/${s3CSVKey}`,
-		Expires: 60, // min
+		Bucket: appConfig.s3.setupConfig.bucketName,
+		Key: result,
+		Expires: appConfig.s3.preferences.csv.preSingedUrlValidity, // min
 	})
 
 	return {
-		expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+		expiresAt: new Date(
+			Date.now() + appConfig.s3.preferences.csv.preSingedUrlValidity * 60 * 1000
+		).toISOString(),
 		csvSingedUrl: Location,
 	}
 }

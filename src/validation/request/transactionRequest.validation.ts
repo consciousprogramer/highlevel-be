@@ -44,3 +44,10 @@ export const walletIdValidator = Joi.object({
 		"any.required": "walletId is required",
 	}),
 })
+
+export const jobRecordIdValidator = Joi.object({
+	walletId: Joi.string().required().messages({
+		"string.base": "walletId must be a string",
+		"any.required": "walletId is required",
+	}),
+})

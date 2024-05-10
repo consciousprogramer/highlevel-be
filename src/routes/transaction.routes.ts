@@ -1,5 +1,6 @@
 import { Router } from "express"
 import {
+	csvGenerationStatusCheckController,
 	fetchATransactionController,
 	fetchTransactionsController,
 	generateTransactionsCSVController,
@@ -8,6 +9,7 @@ import {
 import {
 	fetchATransactionParamsSchema,
 	fetchTransactionsQuerySchema,
+	jobRecordIdValidator,
 	walletIdValidator,
 } from "@/validation/request/transactionRequest.validation.js"
 import { paramsValidator, queryValidator } from "@/utils/index.js"
@@ -32,6 +34,12 @@ transactionRouter.get(
 	"/:walletId/csv",
 	paramsValidator(walletIdValidator),
 	generateTransactionsCSVController
+)
+
+transactionRouter.get(
+	"/:walletId/csv/status",
+	paramsValidator(jobRecordIdValidator),
+	csvGenerationStatusCheckController
 )
 
 export default transactionRouter

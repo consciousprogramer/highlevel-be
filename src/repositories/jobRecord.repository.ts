@@ -1,6 +1,6 @@
 import JobRecord from "@/models/JobRecord.model.js"
 import CRUDRepository from "./crud.repository.js"
-import { CreationAttributes, Optional } from "sequelize"
+import { Attributes, CreationAttributes, Optional } from "sequelize"
 import { JOB_STATUSES } from "@/utils/constants/model.constants.js"
 import { v4 } from "uuid"
 
@@ -18,6 +18,29 @@ class JobRecordRepository extends CRUDRepository<JobRecord> {
 			id: id ?? this.generateUUID(),
 			status: JOB_STATUSES.PUSHED,
 		})
+	}
+
+	async checkCsvGenerationJob(jobRecordId: string) {
+		const jobRecord = await this.model.findOne({
+			where: {
+				id: jobRecordId,
+				status: JOB_STATUSES.COMPLETED,
+			},
+			raw: true,
+			attributes: ["status", "result"],
+		})
+
+		if (!jobRecord) {
+			return {
+				data: null,
+				isCompleted: false,
+			}
+		}
+
+		return {
+			data: jobRecord as Pick<Attributes<JobRecord>, "status" | "result">,
+			isCompleted: jobRecord.status === JOB_STATUSES.COMPLETED,
+		}
 	}
 }
 

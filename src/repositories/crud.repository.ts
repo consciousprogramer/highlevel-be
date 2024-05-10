@@ -17,45 +17,6 @@ import { getModelUpdateType } from "@/types/index.js"
 import { logger } from "@/setup/index.js"
 import { errorLogger } from "@/setup/winston.setup.js"
 
-// interface crudRepositoryThis<M extends Model> extends ModelStatic<M> {
-//   model: M
-// }
-
-// export function CRUDRepository<M extends Model>(
-//   this: crudRepositoryThis<M>,
-//   model: M
-// ) {
-//   this.model = model
-
-//   this.findByPk = async function (identifier) {
-//     const result = await this.model.findByPk(identifier)
-//     return result
-//   }
-// }
-
-// class NonAbstractModel extends Model{}
-
-// const aa = new NonAbstractModel()
-
-// type CRUDRepositoryMethods<M extends Model<any, any>> = Omit<ModelStatic<M>, "">
-
-// class CRUDRepository<M extends Model<any, any>>
-//   implements CRUDRepositoryMethods<M>
-// {
-//   private model: M
-
-//   constructor(model: M) {
-//     this.model = model
-//   }
-
-//   findByPk(
-//     identifier: Identifier,
-//     options: Omit<NonNullFindOptions<Attributes<M>>, "where">
-//   ): Promise<M> {
-//     return Promise.resolve(this.model)
-//   }
-// }
-
 export default class CRUDRepository<M extends Model<any, any>> {
 	model: ModelStatic<M>
 	name: string
