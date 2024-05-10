@@ -1,9 +1,8 @@
 import { redis } from "@/setup/redis.setup.js"
 import logger from "@/setup/winston.setup.js"
-import { v4 } from "uuid"
 import {
 	REDIS_KEYS,
-	initialResourceIdPool,
+	resourceIdPrefix,
 } from "./constants/redis.constants.js"
 
 export const portManager = (numCPUs: number, MAIN_PORT: number) => {
@@ -68,7 +67,9 @@ export class ClusterManager {
 	}
 
 	private async init() {
-		this.resourceIds = initialResourceIdPool.slice(0, this.numCPUs)
+		this.resourceIds = new Array(this.numCPUs)
+			.fill(0)
+			.map((_, index) => `${resourceIdPrefix}${index}`)
 		this.resourceIds.forEach((resourceId) => {
 			this.resourceIdToWorkerIdMap.set(resourceId, null)
 		})
